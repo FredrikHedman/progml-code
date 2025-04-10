@@ -13,7 +13,7 @@ def train(X, Y, iterations, lr):
     w = 0
     for i in range(iterations):
         current_loss = loss(X, Y, w)
-        print("Iteration %4d => Loss: %.6f" % (i, current_loss))
+        print(f"Iteration {i:4d} => Loss: {current_loss:.6f}")
 
         if loss(X, Y, w + lr) < current_loss:
             w += lr
@@ -30,14 +30,16 @@ X, Y = np.loadtxt("pizza.txt", skiprows=1, unpack=True)
 
 # Train the system
 w = train(X, Y, iterations=10000, lr=0.01)
-print("\nw=%.3f" % w)
+print(f"\nw={w:.3f}")
 
 # Predict the number of pizzas
-print("Prediction: x=%d => y=%.2f" % (20, predict(20, w)))
+x = 20
+print(f"Prediction: x={x:d} => y={predict(x, w):.2f}")
 
 # Plot the chart
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 sns.set_theme()
 plt.plot(X, Y, "bo")
 plt.xticks(fontsize=15)
