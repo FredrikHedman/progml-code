@@ -1,0 +1,22 @@
+* Course notes
+** CH02
+    + Implementations in Julia
+    + Add least-square solution for comparison
+** Ch03
+    +
+** Environment
+*** Install miniconda
+ conda install numpy
+ conda install matplotlib
+ conda install seaborn
+*** Setting up the environment for python
+ . ~/bin/activate-conda
+ conda env list
+ conda activate ML
+ conda update -n ML --all
+ python --version
+ python course_code/check_libs.py
+*** Install Julia
+OSX: curl -fsSL https://install.julialang.org | sh
+LINUX: curl -fsSL https://install.julialang.org | sh
+Windows: winget install julia -s msstore
