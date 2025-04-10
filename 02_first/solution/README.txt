@@ -1,3 +1,5 @@
+<2025-04-10 Tor> Added solutions in Julia.
+
 This folder contains two experiments. One runs linear regression with a very
 large learning rate (big_learning_rate.py), and the other with a very small one
 (tiny_learning_rate.py).
