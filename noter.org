@@ -3,7 +3,11 @@
     + Implementations in Julia
     + Add least-square solution for comparison
 ** Ch03
-    +
+    + Implementations in Julia.
+    + Surface plots are ok, but adding lines does not look right.  The
+      are shifted with respect to the surface.  See TODO.
+    + When learning rate becomes to large the adjustments become so
+      large so they jump to the other side and higher up.
 ** Environment
 *** Install miniconda
  conda install numpy
