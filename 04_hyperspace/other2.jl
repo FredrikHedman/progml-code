@@ -1,4 +1,4 @@
-
+using Base: start_reading
 data_lines = [
 "Country                       Pollution             Healthcare            Water       Life",
 "Argentina                     13.67861608           4.78591616            98.9        76.251999",
@@ -24,39 +24,40 @@ data_lines = [
 "Burundi                       47.29057045           7.53556539            75.8        56.688",
 ]
 
-
-function field_start_positions(header::String)
-    positions = [m.offset for m in eachmatch(r"\S+", header)]
-    return positions
+function column_symbols(header::String)
+    names = split(header)
+    return ntuple(i -> Symbol(names[i]), length(names))
 end
 
-function parse_line(line, hsymbols, positions)
-    pFloat(num) = parse(Float64, num)
+function field_start_positions(header::String)
+    matches = collect(eachmatch(r"\S+", header))
+    return ntuple(i -> matches[i].offset, length(matches))
+end
 
-    start = copy(positions)
-    stopp = circshift(start, -1) .- 1
-    stopp[end] = lastindex(line)
-
-    fields = String[]
-    for (strt,stpp) in zip(start,stopp)
-        push!(fields, strip(line[strt:stpp]))
+function parse_line(line::AbstractString, colsym::NTuple{N,Symbol}, pstart::NTuple{N,Int}) where {N}
+    function try_parse_number(s::AbstractString)
+        for T in (Int, Float64)
+            parsed = tryparse(T, s)
+            isnothing(parsed) || return parsed
+        end
+        return s
     end
-    vals = (fields[1],
-            pFloat(fields[2]), pFloat(fields[3]), pFloat(fields[4]), pFloat(fields[5]))
-    return (; zip(hsymbols, vals)...)
+
+    function column_ranges(pstart::NTuple{N,Int}, line)  where {N}
+        pstop = ((pstart[2:end] .- 1)..., lastindex(line))
+        return zip(pstart, pstop)
+    end
+
+    fields = [strip(line[cstart:cstop]) for (cstart, cstop) in column_ranges(pstart, line)]
+    parsed_values = try_parse_number.(fields)
+    return NamedTuple{colsym}(parsed_values)
 end
 
 header = data_lines[1]
-hsymbols = Tuple(Symbol(hname) for hname in split(header))
-field_positions = field_start_positions(header)
-table = [parse_line(line, hsymbols, field_positions) for line in data_lines[2:end]]
+cols = column_symbols(header)
+spos = field_start_positions(header)
+table = [parse_line(line, cols, spos) for line in data_lines[2:end]]
 
-# hsymbols = Tuple(Symbol(hname) for hname in split(header))
-# table = [NamedTuple{hsymbols}(row) for row in parsed_data]
-
-for r in table
+for r in table[1:20]
    println(r)
 end
-
-#ftypes = (String, Float64, Float64, Float64, Float64)
-#[parse(ftypes[i], parsed_data[2][i]) for i in 2:5]
